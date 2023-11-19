@@ -41,7 +41,3 @@ def texts_vectorization(texts, n_components=100):
     reduced_data = svd.fit_transform(tfidf_matrix)
 
     return reduced_data
-
-if __name__ == "__main__":
-    df_all = pd.read_csv('../data/all.csv')
-    plot_svd_performance(df_all.text, 500)
