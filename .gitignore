@@ -1,8 +1,7 @@
-/.DS_Store
-/.ipynb_checkpoints
-/data
-/hand-outs
-/phase1_invocation
-codes/*.npy
-codes/.ipynb_checkpoints
-codes/__pycache__
+.DS_Store
+.ipynb_checkpoints/
+data/
+hand-outs/
+phase1_invocation/
+codes/**/*.npy
+__pycache__/
