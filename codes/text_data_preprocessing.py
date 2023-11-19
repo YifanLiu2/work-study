@@ -5,7 +5,7 @@ from sklearn.decomposition import TruncatedSVD
 import matplotlib.pyplot as plt
 
 
-def plot_svd_performance(texts):
+def plot_svd_performance(texts, n_components):
     """
     Plot the explained variance ratio vs. n_components.
 
@@ -15,7 +15,7 @@ def plot_svd_performance(texts):
     vectorizor = TfidfVectorizer()
     tfidf_matrix = vectorizor.fit_transform(texts)
 
-    svd = TruncatedSVD(n_components=5000, random_state=42)
+    svd = TruncatedSVD(n_components=n_components, random_state=42)
     svd.fit(tfidf_matrix)
     plt.figure(figsize=(10,6))
     plt.plot(range(1, len(svd.explained_variance_ratio_) + 1),
@@ -43,5 +43,5 @@ def texts_vectorization(texts, n_components=100):
     return reduced_data
 
 if __name__ == "__main__":
-    df_all = pd.read_csv("../data/all.csv")
-    plot_svd_performance(df_all.text)
+    df_all = pd.read_csv('../data/all.csv')
+    plot_svd_performance(df_all.text, 500)
