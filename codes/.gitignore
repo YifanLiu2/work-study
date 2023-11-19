@@ -1,2 +1,3 @@
 codes/*.npy
 codes/.ipynb_checkpoints
+codes/__pycache__
