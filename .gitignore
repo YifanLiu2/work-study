@@ -4,4 +4,5 @@ data/
 hand-outs/
 phase1_invocation/
 codes/**/*.npy
+codes/**/*.ipynb
 __pycache__/
