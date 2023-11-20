@@ -1,5 +1,3 @@
-
-
 class TextProcessor:
     """
     Class for processing text data using vectorization and optional dimensionality reduction.
