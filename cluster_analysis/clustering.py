@@ -53,7 +53,7 @@ class KMeansClusterer(BaseClusterer):
     """
     def __init__(self, k):
         super().__init__(k)
-        self.clusterer = KMeans(n_clusters=self.k, random_state=42)
+        self.clusterer = KMeans(n_clusters=self.k, n_init=10, random_state=42)
     
     def clustering(self, data, tune=False, n_iter=10):
         if tune:
@@ -116,6 +116,8 @@ class GMMClusterer(BaseClusterer):
 def silhouette_scorer(estimator, X):
     """
     Custom scorer function that uses the silhouette score.
+    This function is meant to be used as a scorer compatible with scikit-learn's
+    model selection and evaluation routines.
 
     Parameters:
         estimator: The clustering model to evaluate.
@@ -125,12 +127,12 @@ def silhouette_scorer(estimator, X):
         float: The silhouette score.
     """
     if hasattr(estimator, 'labels_'):
-        estimator.fit(X)
         clusters = estimator.labels_
     elif hasattr(estimator, 'predict'):
-        clusters = estimator.fit_predict(X)
+        estimator.fit(X)
+        clusters = estimator.predict(X)
     else:
         raise ValueError("The estimator must have a 'labels_' attribute or a 'predict' method")
-    score = silhouette_score(X, clusters)
-    return score
+    return silhouette_score(X, clusters)
+
     
