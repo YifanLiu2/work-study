@@ -41,15 +41,16 @@ class BaseClusterer(ABC):
         best_params = None
 
         for params in ParameterSampler(param_distributions, n_iter, random_state=42):
-            self.clusterer.set_params(**params)
-            
-            self.clusterer.fit(data)
-            score = silhouette_scorer(self.clusterer, data)
-            print(score)
+            try:
+                self.clusterer.set_params(**params)
+                self.clusterer.fit(data)
+                score = silhouette_scorer(self.clusterer, data)
 
-            if score > best_score:
-                best_score = score
-                best_params = params
+                if score > best_score:
+                    best_score = score
+                    best_params = params
+            except ValueError:
+                continue
 
         print(f"Best Params: {best_params}, Best Score: {best_score}")
         self.clusterer.set_params(**best_params)
