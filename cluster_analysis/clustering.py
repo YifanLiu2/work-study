@@ -3,8 +3,7 @@ import numpy as np
 from sklearn.model_selection import ParameterSampler
 from sklearn.cluster import KMeans, AgglomerativeClustering
 from sklearn.mixture import GaussianMixture
-from sklearn.metrics import silhouette_score, make_scorer
-from sklearn.model_selection import RandomizedSearchCV
+from sklearn.metrics import silhouette_score
 
 
 class BaseClusterer(ABC):
