@@ -44,8 +44,8 @@ class BaseClusterer(ABC):
             self.clusterer.set_params(**params)
             
             self.clusterer.fit(data)
-            labels = self.clusterer.labels_ if hasattr(self.clusterer, 'labels_') else self.clusterer.predict(data)
-            score = silhouette_score(data, labels)
+            score = silhouette_scorer(self.clusterer, data)
+            print(score)
 
             if score > best_score:
                 best_score = score
