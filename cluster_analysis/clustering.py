@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+import numpy as np
+from sklearn.model_selection import ParameterSampler
 from sklearn.cluster import KMeans, AgglomerativeClustering
 from sklearn.mixture import GaussianMixture
 from sklearn.metrics import silhouette_score, make_scorer
@@ -27,25 +29,31 @@ class BaseClusterer(ABC):
         """
         raise NotImplementedError
     
-    def tune_parameters(self, data, n_iter, params):
+    def tune_parameters(self, data, n_iter, param_distributions):
         """
-        Tune parameters of the clustering model using RandomizedSearchCV.
+        Tune parameters of the clustering model.
 
         Parameters:
         data (array-like): Data points for clustering.
         n_iter (int): Number of iterations for parameter tuning.
-        param_distributions (dict): Parameter distribution for RandomizedSearchCV.
+        param_distributions (dict): Parameter distribution for sampling.
         """
-        random_search = RandomizedSearchCV(
-            estimator=self.clusterer,
-            param_distributions=params,
-            n_iter=n_iter,
-            scoring=make_scorer(silhouette_scorer, greater_is_better=True),
-            random_state=42
-        )
-        search_result = random_search.fit(data)
-        print(f"Best Params: {search_result.best_params_}, Best Score: {search_result.best_score_}")
-        self.clusterer = search_result.best_estimator_
+        best_score = -np.inf
+        best_params = None
+
+        for params in ParameterSampler(param_distributions, n_iter, random_state=42):
+            self.clusterer.set_params(**params)
+            
+            self.clusterer.fit(data)
+            labels = self.clusterer.labels_ if hasattr(self.clusterer, 'labels_') else self.clusterer.predict(data)
+            score = silhouette_score(data, labels)
+
+            if score > best_score:
+                best_score = score
+                best_params = params
+
+        print(f"Best Params: {best_params}, Best Score: {best_score}")
+        self.clusterer.set_params(**best_params)
 
 class KMeansClusterer(BaseClusterer):
     """
