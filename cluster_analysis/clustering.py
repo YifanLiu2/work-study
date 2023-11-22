@@ -89,7 +89,7 @@ class HierarchicalClusterer(BaseClusterer):
         if tune:
             param_distributions = {
                 'n_clusters': [self.k],
-                'affinity': ['euclidean', 'manhattan', 'cosine'],
+                'metric': ['euclidean', 'manhattan', 'cosine'],
                 'linkage': ['ward', 'complete', 'average', 'single'],
             }
             self.tune_parameters(data, n_iter, param_distributions)
