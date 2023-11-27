@@ -34,7 +34,7 @@ def plot_cluster_data(labels, time, order, vertical_bars=None, x_limits=None):
     x_limits (tuple, optional): A tuple containing the min and max values for the x-axis range.
     """
     plt.figure(figsize=(10, 6))
-    sns.scatterplot(x=time, y=order, hue=labels, palette='viridis', s=5)
+    sns.scatterplot(x=time, y=order, hue=labels, palette='viridis', s=10)
 
     plt.title('Scatter Plot of Merge Order over Time')
     plt.xlabel('Time Order')
