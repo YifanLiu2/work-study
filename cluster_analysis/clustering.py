@@ -108,8 +108,19 @@ class HierarchicalClusterer(BaseClusterer):
         if not hasattr(self.clusterer, 'children_'):
             raise ValueError("The clustering model must be fit before getting the merge order.")
 
-        # The order of merges is directly given by 'children_'
-        merge_order = self.clusterer.children_
+        n_samples = len(self.clusterer.labels_)
+        merge_order = np.zeros(n_samples, dtype=int)
+        n_steps = self.clusterer.children_.shape[0]
+
+        for i, merge in enumerate(self.clusterer.children_):
+            for child_idx in merge:
+                if child_idx < n_samples: 
+                    if merge_order[child_idx] == 0:
+                        merge_order[child_idx] = i + 1 
+
+        singletons = np.where(merge_order == 0)[0]
+        merge_order[singletons] = n_steps + 1
+
         return merge_order
 
 
