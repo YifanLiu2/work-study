@@ -96,32 +96,6 @@ class HierarchicalClusterer(BaseClusterer):
 
         self.clusterer.fit(data)
         return self.clusterer.labels_
-    
-    def get_ordering(self):
-        """
-        Retrieves the order of merges in the hierarchical clustering process.
-
-        Returns:
-        numpy.ndarray: An array where each row represents a merge operation. Each row
-                       contains two indices, indicating the clusters/points that were merged.
-        """
-        if not hasattr(self.clusterer, 'children_'):
-            raise ValueError("The clustering model must be fit before getting the merge order.")
-
-        n_samples = len(self.clusterer.labels_)
-        merge_order = np.zeros(n_samples, dtype=int)
-        n_steps = self.clusterer.children_.shape[0]
-
-        for i, merge in enumerate(self.clusterer.children_):
-            for child_idx in merge:
-                if child_idx < n_samples: 
-                    if merge_order[child_idx] == 0:
-                        merge_order[child_idx] = i + 1 
-
-        singletons = np.where(merge_order == 0)[0]
-        merge_order[singletons] = n_steps + 1
-
-        return merge_order
 
 
 class GMMClusterer(BaseClusterer):
