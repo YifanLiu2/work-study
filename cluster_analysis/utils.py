@@ -49,7 +49,7 @@ def plot_bar_with_confidence(df, labels, meta):
 
     # Plot using seaborn's barplot
     plt.figure(figsize=(10, 6))
-    sns.barplot(x='labels', y=meta, data=plot_df, ci=95)
+    sns.barplot(x='labels', y=meta, data=plot_df, errorbar=('ci', 95))
 
     plt.title(f'Mean of {meta} by Cluster Labels with 95% CI')
     plt.xlabel('Cluster Labels')
