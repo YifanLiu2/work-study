@@ -3,23 +3,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
 
-def sort_data_by_cluster(data, labels):
-    """
-    Sorts the data based on cluster labels.
-
-    Parameters:
-    data (DataFrame): The data to be sorted.
-    labels (array-like): The cluster labels for the data.
-
-    Returns:
-    DataFrame, array-like: The sorted data and corresponding sorted labels.
-    """
-    sorted_indices = np.argsort(labels)
-    sorted_data = data.iloc[sorted_indices]
-    sorted_labels = labels[sorted_indices]
-    return sorted_data, sorted_labels
-
-
 def plot_cluster_data(labels, time, order, vertical_bars=None, x_limits=None):
     """
     Plots a scatter plot with time as the x-axis, merge order as the y-axis, 
@@ -48,5 +31,28 @@ def plot_cluster_data(labels, time, order, vertical_bars=None, x_limits=None):
         plt.xlim(x_limits)
 
     plt.legend(title='Labels')
+    plt.show()
+
+
+def plot_bar_with_confidence(df, labels, meta):
+    """
+    Plots a bar plot for a given metadata column grouped by labels with 95% confidence intervals.
+
+    Parameters:
+    df (DataFrame): The DataFrame containing the data.
+    labels (array-like): The cluster labels.
+    meta (str): The name of the metadata column to analyze.
+    """
+    # Create a copy of the DataFrame with only necessary columns
+    plot_df = df[[meta]].copy()
+    plot_df['labels'] = labels
+
+    # Plot using seaborn's barplot
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x='labels', y=meta, data=plot_df, ci=95)
+
+    plt.title(f'Mean of {meta} by Cluster Labels with 95% CI')
+    plt.xlabel('Cluster Labels')
+    plt.ylabel(f'Mean of {meta}')
     plt.show()
 
