@@ -32,3 +32,4 @@ def plot_cluster_data(labels, time, order, vertical_bars=None, x_limits=None):
 
     plt.legend(title='Labels')
     plt.show()
+
