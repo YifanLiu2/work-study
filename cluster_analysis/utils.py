@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
 
-def plot(labels, time, order, vertical_bars=None, x_limits=None):
+def plot_cluster_data(labels, time, order, vertical_bars=None, x_limits=None):
     """
     Plots a scatter plot with time as the x-axis, merge order as the y-axis, 
     and color-coded by labels. Optionally adds multiple vertical bars with specified colors.
