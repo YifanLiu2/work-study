@@ -97,6 +97,22 @@ class HierarchicalClusterer(BaseClusterer):
         self.clusterer.fit(data)
         return self.clusterer.labels_
     
+    def get_ordering(self):
+        """
+        Retrieves the order of merges in the hierarchical clustering process.
+
+        Returns:
+        numpy.ndarray: An array where each row represents a merge operation. Each row
+                       contains two indices, indicating the clusters/points that were merged.
+        """
+        if not hasattr(self.clusterer, 'children_'):
+            raise ValueError("The clustering model must be fit before getting the merge order.")
+
+        # The order of merges is directly given by 'children_'
+        merge_order = self.clusterer.children_
+        return merge_order
+
+
 class GMMClusterer(BaseClusterer):
     """
     A clustering algorithm based on the Gaussian Mixture Model.
