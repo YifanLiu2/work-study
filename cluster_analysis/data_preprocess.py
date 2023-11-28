@@ -54,15 +54,14 @@ class CharacterLevelVectorizer(BaseVectorizer):
 
     def vectorize(self, texts):
         if not self.char_to_index:
-            self.set_char_to_index
+            self.set_char_to_index(texts)
         
         encoded_sequences = []
         for text in texts:
             encoded_text = [self.char_to_index.get(char, 0) for char in text]
             encoded_sequences.append(encoded_text)
-        self.max_length = max(self.max_length, len(encoded_text))
+            self.max_length = max(self.max_length, len(encoded_text))
         padded_sequences = [self._pad_sequence(seq) for seq in encoded_sequences]
-        print(padded_sequences[0])
         matrix = sparse.csr_matrix(padded_sequences)
         return matrix
     
