@@ -62,7 +62,7 @@ class CharacterLevelVectorizer(BaseVectorizer):
             encoded_sequences.append(encoded_text)
         self.max_length = max(self.max_length, len(encoded_text))
         padded_sequences = [self._pad_sequence(seq) for seq in encoded_sequences]
-        print(padded_sequences)
+        print(padded_sequences[0])
         matrix = sparse.csr_matrix(padded_sequences)
         return matrix
     
