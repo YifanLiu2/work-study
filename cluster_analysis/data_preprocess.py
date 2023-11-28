@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from scipy import sparse
 
 class BaseVectorizer(ABC):
     """
@@ -41,6 +42,51 @@ class TfidfVectorizer(BaseVectorizer):
 
     def vectorize(self, texts):
         return self.vectorizer.fit_transform(texts)
+
+class CharacterLevelVectorizer(BaseVectorizer):
+    """
+    Character-level vectorizer class.
+    """
+
+    def __init__(self):
+        self.char_to_index = None
+
+    def vectorize(self, texts):
+        if not self.char_to_index:
+            self.set_char_to_index
+        
+        encoded_sequences = []
+        for text in texts:
+            encoded_text = [self.char_to_index.get(char, 0) for char in text]
+            encoded_sequences.append(encoded_text)
+            self.max_length = max(self.max_length, len(encoded_text))
+        padded_sequences = [self._pad_sequence(seq) for seq in encoded_sequences]
+        matrix = sparse.csr_matrix(padded_sequences)
+        return matrix
+    
+    def set_char_to_index(self, texts):
+        """
+        Create a mapping from characters to indices based on the provided texts.
+        
+        Parameters:
+        texts (list of str): The list of texts to create the mapping from.
+        """
+        all_text = ''.join(texts)
+        unique_chars = sorted(set(all_text))
+        self.char_to_index = {char: idx + 1 for idx, char in enumerate(unique_chars)}
+
+    def _pad_sequence(self, sequence):
+        """
+        Pad the sequence to ensure uniform length.
+
+        Parameters:
+        sequence (list of int): The character-encoded sequence to pad.
+
+        Returns:
+        list of int: The padded sequence.
+        """
+        padding = [0] * (self.max_length - len(sequence))
+        return sequence + padding
 
 
 class Reducer:
