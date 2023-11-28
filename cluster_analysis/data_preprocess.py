@@ -50,6 +50,7 @@ class CharacterLevelVectorizer(BaseVectorizer):
 
     def __init__(self):
         self.char_to_index = None
+        self.max_length = 0
 
     def vectorize(self, texts):
         if not self.char_to_index:
