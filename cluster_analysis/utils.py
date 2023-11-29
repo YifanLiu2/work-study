@@ -57,19 +57,37 @@ def plot_bar_with_confidence(df, labels, meta):
     plt.show()
 
 
-def plot_cluster_time_distribution(df, labels):
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+def plot_cluster_time_distribution(df, labels, bin_width=10):
+    """
+    Plot the time distribution for each cluster in a given DataFrame, with histogram bars covering multiple years.
+
+    Parameters:
+    df (DataFrame): The DataFrame containing the data to be plotted. 
+                    It must include a 'date' column and a column with cluster labels.
+    labels (array-like): A list of unique identifiers for each cluster present in the DataFrame.
+    bin_width (int): The width of each bin in the histogram, in years. Defaults to 5 years.
+    """
     plot_df = df.copy()
     plot_df['label'] = labels
-    for i in labels:
+
+    plot_df['year'] = pd.to_datetime(plot_df['date']).dt.year
+    for i in np.unique(labels):
         df_label = plot_df[plot_df['label'] == i]
 
-        date_counts = df_label['date'].value_counts().sort_index()
+        min_year = df_label['year'].min()
+        max_year = df_label['year'].max()
+        bins = np.arange(min_year, max_year + bin_width, bin_width)
 
         plt.figure(figsize=(10, 6))
-        sns.barplot(x=date_counts.index, y=date_counts.values)
-        plt.xticks(rotation=45)  
-        plt.xlabel('Date')
+        sns.histplot(df_label, x='year', bins=bins, kde=False)
+        plt.xticks(bins)
+        plt.xlabel('Year')
         plt.ylabel('Count')
-        plt.title(f'Time Distribution for Cluster {i}')
+        plt.title(f'Time Distribution for Cluster {i} - {bin_width}-Year Bins')
         plt.show()
-    
+
