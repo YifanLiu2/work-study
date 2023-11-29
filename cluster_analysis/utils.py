@@ -56,3 +56,20 @@ def plot_bar_with_confidence(df, labels, meta):
     plt.ylabel(f'Mean of {meta}')
     plt.show()
 
+
+def plot_cluster_time_distribution(df, labels):
+    plot_df = df.copy()
+    plot_df['label'] = labels
+    for i in labels:
+        df_label = plot_df[plot_df['label'] == i]
+
+        date_counts = df_label['date'].value_counts().sort_index()
+
+        plt.figure(figsize=(10, 6))
+        sns.barplot(x=date_counts.index, y=date_counts.values)
+        plt.xticks(rotation=45)  
+        plt.xlabel('Date')
+        plt.ylabel('Count')
+        plt.title(f'Time Distribution for Cluster {i}')
+        plt.show()
+    
