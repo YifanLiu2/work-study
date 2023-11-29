@@ -75,16 +75,16 @@ def plot_cluster_time_distribution(df, labels, bin_width=10):
     plot_df = df.copy()
     plot_df['label'] = labels
 
-    plot_df['year'] = pd.to_datetime(plot_df['date']).dt.year
+    plot_df['date'] = pd.to_datetime(plot_df['date']).dt.year
     for i in np.unique(labels):
         df_label = plot_df[plot_df['label'] == i]
 
-        min_year = df_label['year'].min()
-        max_year = df_label['year'].max()
+        min_year = df_label['date'].min()
+        max_year = df_label['date'].max()
         bins = np.arange(min_year, max_year + bin_width, bin_width)
 
         plt.figure(figsize=(10, 6))
-        sns.histplot(df_label, x='year', bins=bins, kde=False)
+        sns.histplot(df_label, x='date', bins=bins, kde=False)
         plt.xticks(bins)
         plt.xlabel('Year')
         plt.ylabel('Count')
