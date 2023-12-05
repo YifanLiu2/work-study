@@ -57,12 +57,7 @@ def plot_bar_with_confidence(df, labels, meta):
     plt.show()
 
 
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-def plot_cluster_time_distribution(df, labels, bin_width=10):
+def plot_cluster_time_distribution(df, labels, bin_width=20):
     """
     Plot the time distribution for each cluster in a given DataFrame, with histogram bars covering multiple years.
 
@@ -74,8 +69,8 @@ def plot_cluster_time_distribution(df, labels, bin_width=10):
     """
     plot_df = df.copy()
     plot_df['label'] = labels
+    plot_df.loc[plot_df['date'] == 0, 'date'] = 600
 
-    plot_df['date'] = pd.to_datetime(plot_df['date']).dt.year
     for i in np.unique(labels):
         df_label = plot_df[plot_df['label'] == i]
 
