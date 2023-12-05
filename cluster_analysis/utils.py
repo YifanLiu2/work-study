@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
+from collections import Counter
+import itertools
 
 def plot_cluster_data(labels, time, order, vertical_bars=None, x_limits=None):
     """
@@ -112,15 +114,65 @@ def plot_cluster_by_metadata(df, labels, meta_lst, cluster_num=None, anglo=None)
     mean_values_df = mean_values.reset_index()
     mean_values_df.columns = ['metadata', 'mean value']
 
+    title = 'Mean of Metadata'
+    if cluster_num is not None:
+        title += f' in Cluster {cluster_num}'
+    if anglo is not None:
+        title += ' in Anglo-Saxon Period' if anglo else ' in Norman Period'
+
     plt.figure(figsize=(10, 6))
     sns.barplot(x='metadata', y='mean value', data=mean_values_df)
-    plt.title(f'Mean of Metadata for Cluster {cluster_num}')
+    plt.title(title)
     plt.xlabel('Metadata')
     plt.ylabel('Mean Value')
     plt.xticks(rotation=45)
     
     plt.show()
 
+
+def plot_cluster_word_distribution(df, labels, cluster_num=None, n=3, top_n=20, anglo=None):
+    """
+    Plot the distribution of the first 'n' words from each phrase in a specified cluster.
+
+    Parameters:
+    df (pandas.DataFrame): A DataFrame containing the dataset with phrases in one of the columns.
+    labels (list or array-like): A list or array of cluster labels corresponding to each row in `df`.
+    cluster_num (int, optional): The specific cluster number to analyze. If None, all clusters are considered.
+    n (int, default 3): The number of initial words to consider from each phrase.
+    top_n (int, default 20): The number of top frequent words to display in the plot.
+    anglo (bool, optional): A boolean to filter the phrases based on historical date. 
+                              True to consider only phrases before 1066, False for phrases from 1066 and onwards.
+                              If None, no date-based filtering is applied.
+    """
+    plot_df = df.copy()
+    plot_df['label'] = labels
+
+    if cluster_num is not None:
+        plot_df = plot_df[plot_df['label'] == cluster_num]
+
+    if anglo is True:
+        plot_df = plot_df[plot_df['date'] < 1066]
+    elif anglo is False:
+        plot_df = plot_df[plot_df['date'] >= 1066]
+
+    words = plot_df['phrase'].apply(lambda x: x.split()[:n])
+    words = list(itertools.chain(*words))
+    word_counts = Counter(words)
+    top_n_words = word_counts.most_common(top_n)
+    words_df = pd.DataFrame(top_n_words, columns=['Word', 'Frequency'])
+
+    title = f'Top {top_n} Frequent Words Among First {n} Words'
+    if cluster_num is not None:
+        title += f' in Cluster {cluster_num}'
+    if anglo is not None:
+        title += ' in Anglo-Saxon Period' if anglo else ' in Norman Period'
+
+    plt.figure(figsize=(10, 6))
+    plt.bar(words_df['Word'], words_df['Frequency'])
+    plt.title(f'Top {n} Word Distribution in Cluster')
+    plt.xlabel('Words')
+    plt.ylabel('Frequency')
+    plt.show()
 
 
 
