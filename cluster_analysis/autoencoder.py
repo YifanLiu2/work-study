@@ -84,11 +84,11 @@ class CharLevelAutoencoder(nn.Module):
         return reconstructed, metadata_pred
 
 
-class AutoencoderTrainer:
+class CharVectorizer:
     """
     A training class for the CharLevelAutoencoder to handle training loops, loss calculation, and optimization.
     """
-    def __init__(self, model, data_loader, optimizer, criterion, metadata_criterion, device='cpu'):
+    def __init__(self, model, data_loader, optimizer, criterion=nn.CrossEntropyLoss(), metadata_criterion=nn.BCEWithLogitsLoss() , device='cpu'):
         """
         Initialize the trainer with the required components.
         Parameters:
@@ -132,11 +132,9 @@ class AutoencoderTrainer:
             self.optimizer.zero_grad()
             reconstructed, metadata_pred = self.model(inputs)
 
-            # Calculate the reconstruction loss and the metadata prediction loss
             reconstruction_loss = self.criterion(reconstructed, inputs)
             metadata_loss = self.metadata_criterion(metadata_pred, metadata)
 
-            # Combine losses with metadata loss having less weight
             loss = reconstruction_loss + metadata_loss_weight * metadata_loss
             loss.backward()
             self.optimizer.step()
@@ -157,6 +155,20 @@ class AutoencoderTrainer:
         for epoch in range(epochs):
             print(f'Epoch {epoch+1}/{epochs}')
             self.train_epoch(metadata_loss_weight)
+    
+    def encode_data(self, data):
+        """
+        Encode data using the autoencoder's encoder.
+        Paramters:
+        ----------
+            data (torch.Tensor): Data to encode.
+        Returns:
+            torch.Tensor: Encoded data.
+        """
+        self.model.eval()
+        with torch.no_grad():
+            encoded_data = self.model.encode(data.to(self.device))
+        return encoded_data
 
 
 class TextDataset(Dataset):
