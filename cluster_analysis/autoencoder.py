@@ -157,8 +157,8 @@ class AutoencoderTrainer:
 
 
 class TextDataset(Dataset):
-    def __init__(self, csv_file, meta_lst, padding_char=' '):
-        self.data_frame = pd.read_csv(csv_file)
+    def __init__(self, dataframe, meta_lst, padding_char=' '):
+        self.data_frame = dataframe
         self.meta_lst = meta_lst
         self.max_length = self.calculate_max_length()
         self.char_to_index = self.create_char_to_index_map(padding_char)
