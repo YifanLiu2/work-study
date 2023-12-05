@@ -51,7 +51,6 @@ class CharLevelAutoencoder(nn.Module):
         """
         embeds = self.embedding(x)
         _, hidden = self.encoder_rnn(embeds)
-        print(_.shape)
         latent = self.to_latent(hidden[-1])
         return latent
 
@@ -117,6 +116,10 @@ class AutoencoderTrainer:
     def train_epoch(self, metadata_loss_weight):
         """
         Run a single epoch of training.
+        Parameters:
+        -----------
+        meta_loss_weight : float
+            weight of metadata loss.
         """
         self.model.train()
         total_loss = 0
@@ -158,24 +161,62 @@ class AutoencoderTrainer:
 
 class TextDataset(Dataset):
     def __init__(self, dataframe, meta_lst, padding_char=' '):
+        """
+        Initialize the TextDataset.
+        Parameters:
+        ----------
+            dataframe (pandas.DataFrame): The data in a pandas DataFrame.
+            meta_lst (list): List of metadata column names in the dataframe.
+            padding_char (str, optional): Character used for padding text. Defaults to a space.
+        """
         self.data_frame = dataframe
         self.meta_lst = meta_lst
         self.max_length = self.calculate_max_length()
         self.char_to_index = self.create_char_to_index_map(padding_char)
 
     def create_char_to_index_map(self, padding_char):
-        char_to_index = {chr(i): i - 97 for i in range(97, 123)}
-        char_to_index[padding_char] = 26 
+        """
+        Create a mapping from characters to indices.
+        Parameters:
+        ----------
+            padding_char (str): Character used for padding.
+        Returns:
+            dict: Mapping of characters to indices.
+        """
+        char_to_index = {chr(i): i - 97 for i in range(97, 123)}  # Map a-z to 0-25
+        char_to_index[padding_char] = 26  # Map padding character to 26
         return char_to_index
-    
+
     def calculate_max_length(self):
-        max_length = self.data_frame['phrase'].str.len().max()
-        return max_length
+        """
+        Calculate the maximum length of text in the dataset.
+        Parameters:
+        ----------
+            int: The maximum length of text.
+        """
+        return self.data_frame['phrase'].str.len().max()
 
     def __len__(self):
+        """
+        Get the number of items in the dataset.
+        Parameters:
+        ----------
+            int: Number of items.
+        """
         return len(self.data_frame)
 
     def __getitem__(self, idx):
+        """
+        Get the item at the specified index.
+        Parameters:
+        ----------
+            idx (int): Index of the item.
+        Returns:
+            tuple: (text_tensor, metadata_tensor) - Tensors of text and metadata.
+        """
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+
         text = self.data_frame.iloc[idx]['phrase']
         text_tensor = self.process_text(text)
 
@@ -185,35 +226,17 @@ class TextDataset(Dataset):
         return text_tensor, metadata_tensor
 
     def process_text(self, text):
+        """
+        Process the text into a tensor of character indices.
+        Parameters:
+        ----------
+            text (str): The text to process.
+        Returns:
+            torch.Tensor: Tensor of character indices.
+        """
         text_indices = [self.char_to_index.get(char, 26) for char in text.lower()[:self.max_length]] 
-        text_indices += [self.char_to_index[' ']] * (self.max_length - len(text_indices)) 
-
+        text_indices += [self.char_to_index[' ']] * (self.max_length - len(text_indices))
         return torch.tensor(text_indices, dtype=torch.long)
-
-if __name__ == "__main__":
-    meta_lst = ["extent", "agree"]
-    loader = TextDataset("./data/anglo_saxon_full.csv", meta_lst)
-
-    from torch.utils.data import DataLoader
-
-    batch_size = 32  # Set your batch size
-    data_loader = DataLoader(loader, batch_size=batch_size, shuffle=True)
-
-    char_vocab_size = 27  # The number of unique characters (adjust as needed)
-    metadata_dim = 2      # The number of metadata features (adjust based on your dataset)
-
-    # Initialize the autoencoder
-    autoencoder = CharLevelAutoencoder(loader.max_length, char_vocab_size, metadata_dim)
-
-    import torch.optim as optim
-
-    optimizer = optim.Adam(autoencoder.parameters(), lr=0.1)
-    criterion = nn.CrossEntropyLoss()  # For reconstruction
-    metadata_criterion = nn.BCEWithLogitsLoss() 
-
-    trainer = AutoencoderTrainer(autoencoder, data_loader, optimizer, criterion, metadata_criterion)
-
-    trainer.train(2)
 
 
 
