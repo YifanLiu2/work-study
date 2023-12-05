@@ -168,10 +168,11 @@ def plot_cluster_word_distribution(df, labels, cluster_num=None, n=3, top_n=20, 
         title += ' in Anglo-Saxon Period' if anglo else ' in Norman Period'
 
     plt.figure(figsize=(10, 6))
-    plt.bar(words_df['Word'], words_df['Frequency'])
+    plt.barh(words_df['Word'], words_df['Frequency'])
     plt.title(f'Top {n} Word Distribution in Cluster')
-    plt.xlabel('Words')
-    plt.ylabel('Frequency')
+    plt.xlabel('Frequency')
+    plt.ylabel('Words')
+    plt.gca().invert_yaxis()
     plt.show()
 
 
