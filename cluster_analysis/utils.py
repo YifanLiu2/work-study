@@ -155,8 +155,7 @@ def plot_cluster_word_distribution(df, labels, cluster_num=None, n=3, top_n=20, 
     elif anglo is False:
         plot_df = plot_df[plot_df['date'] >= 1066]
 
-    words = plot_df['phrase'].apply(lambda x: x.split()[:n])
-    words = list(itertools.chain(*words))
+    words = plot_df['phrase'].str.split().str[: n].str.join(' ').to_list()
     word_counts = Counter(words)
     top_n_words = word_counts.most_common(top_n)
     words_df = pd.DataFrame(top_n_words, columns=['Word', 'Frequency'])
@@ -169,7 +168,7 @@ def plot_cluster_word_distribution(df, labels, cluster_num=None, n=3, top_n=20, 
 
     plt.figure(figsize=(10, 6))
     plt.barh(words_df['Word'], words_df['Frequency'])
-    plt.title(f'Top {n} Word Distribution in Cluster')
+    plt.title(title)
     plt.xlabel('Frequency')
     plt.ylabel('Words')
     plt.gca().invert_yaxis()
