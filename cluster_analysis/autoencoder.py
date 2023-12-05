@@ -211,8 +211,8 @@ class TextDataset(Dataset):
         Returns:
             dict: Mapping of characters to indices.
         """
-        char_to_index = {chr(i): i - 97 for i in range(97, 123)}  # Map a-z to 0-25
-        char_to_index[padding_char] = 26  # Map padding character to 26
+        char_to_index = {chr(i): i - 97 for i in range(97, 123)}
+        char_to_index[padding_char] = 26 
         return char_to_index
 
     def calculate_max_length(self):

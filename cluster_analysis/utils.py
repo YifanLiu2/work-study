@@ -86,3 +86,34 @@ def plot_cluster_time_distribution(df, labels, bin_width=20):
         plt.title(f'Time Distribution for Cluster {i} - {bin_width}-Year Bins')
         plt.show()
 
+
+def plot_cluster_by_metadata(df, labels, cluster_num, meta_lst):
+    """
+    Plot the mean of binary metadata attributes for a specific cluster.
+
+    Parameters:
+    df (pandas.DataFrame): A DataFrame containing the dataset with multiple metadata attributes.
+    labels (list or array-like): A list or array of cluster labels corresponding to each row in `df`.
+    cluster_num (int): The cluster number for which the metadata distribution is to be plotted.
+    meta_lst (list): A list of strings representing the column names of the metadata attributes in `df`.
+    """
+    plot_df = df.copy()
+    plot_df['label'] = labels
+    cluster_data = plot_df[plot_df['label'] == cluster_num][meta_lst]
+
+    mean_values = cluster_data[meta_lst].mean()
+    mean_values_df = mean_values.reset_index()
+    mean_values_df.columns = ['metadata', 'mean value']
+
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x='metadata', y='mean value', data=mean_values_df)
+    plt.title(f'Mean of Metadata for Cluster {cluster_num}')
+    plt.xlabel('Metadata')
+    plt.ylabel('Mean Value')
+    plt.xticks(rotation=45)
+    
+    plt.show()
+
+
+
+
