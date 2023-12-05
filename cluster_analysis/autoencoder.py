@@ -2,6 +2,7 @@ import torch
 from torch import nn
 from torch.utils.data import Dataset, DataLoader
 import pandas as pd
+import numpy as np
 
 class CharLevelAutoencoder(nn.Module):
     """
@@ -169,6 +170,21 @@ class CharVectorizer:
         with torch.no_grad():
             encoded_data = self.model.encode(data.to(self.device))
         return encoded_data
+    
+    def encode_data_loader(self):
+        """
+        Encode all data in the DataLoader using the autoencoder's encoder and convert to numpy array.
+        Returns:
+            numpy.ndarray: An array of encoded data.
+        """
+        self.model.eval()
+        encoded_batches = []
+        with torch.no_grad():
+            for inputs, _ in self.data_loader:
+                inputs = inputs.to(self.device)
+                encoded = self.encode_data(inputs)
+                encoded_batches.append(encoded.cpu().numpy())
+        return np.concatenate(encoded_batches, axis=0)
 
 
 class TextDataset(Dataset):
