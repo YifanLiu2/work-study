@@ -87,7 +87,7 @@ def plot_cluster_time_distribution(df, labels, bin_width=20):
         plt.show()
 
 
-def plot_cluster_by_metadata(df, labels, cluster_num, meta_lst):
+def plot_cluster_by_metadata(df, labels, meta_lst, cluster_num=None, anglo=None):
     """
     Plot the mean of binary metadata attributes for a specific cluster.
 
@@ -96,12 +96,19 @@ def plot_cluster_by_metadata(df, labels, cluster_num, meta_lst):
     labels (list or array-like): A list or array of cluster labels corresponding to each row in `df`.
     cluster_num (int): The cluster number for which the metadata distribution is to be plotted.
     meta_lst (list): A list of strings representing the column names of the metadata attributes in `df`.
+    anglo
     """
     plot_df = df.copy()
     plot_df['label'] = labels
-    cluster_data = plot_df[plot_df['label'] == cluster_num][meta_lst]
+    if cluster_num is not None:
+        plot_df = plot_df[plot_df['label'] == cluster_num]
+    
+    if anglo is True:
+        plot_df = plot_df[plot_df['date'] < 1066]
+    if anglo is False:
+        plot_df = plot_df[plot_df['date'] >= 1066]
 
-    mean_values = cluster_data[meta_lst].mean()
+    mean_values = plot_df[meta_lst].mean()
     mean_values_df = mean_values.reset_index()
     mean_values_df.columns = ['metadata', 'mean value']
 
