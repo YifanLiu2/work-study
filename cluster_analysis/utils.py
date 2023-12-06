@@ -86,6 +86,7 @@ def plot_cluster_time_distribution(df, labels, bin_width=20):
         plt.xlabel('Year')
         plt.ylabel('Count')
         plt.title(f'Time Distribution for Cluster {i} - {bin_width}-Year Bins')
+        plt.xticks(rotation=90)
         plt.show()
 
 
