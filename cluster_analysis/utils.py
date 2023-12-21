@@ -107,9 +107,9 @@ def plot_cluster_by_metadata(df, labels, meta_lst, cluster_num=None, anglo=None)
         plot_df = plot_df[plot_df['label'] == cluster_num]
     
     if anglo is True:
-        plot_df = plot_df[plot_df['date'] < 1066]
+        plot_df = plot_df[plot_df['norman'] == 0]
     if anglo is False:
-        plot_df = plot_df[plot_df['date'] >= 1066]
+        plot_df = plot_df[plot_df['norman'] == 1]
 
     mean_values = plot_df[meta_lst].mean()
     mean_values_df = mean_values.reset_index()
@@ -152,9 +152,9 @@ def plot_cluster_word_distribution(df, labels, cluster_num=None, n=3, top_n=20, 
         plot_df = plot_df[plot_df['label'] == cluster_num]
 
     if anglo is True:
-        plot_df = plot_df[plot_df['date'] < 1066]
-    elif anglo is False:
-        plot_df = plot_df[plot_df['date'] >= 1066]
+        plot_df = plot_df[plot_df['norman'] == 0]
+    if anglo is False:
+        plot_df = plot_df[plot_df['norman'] == 1]
 
     words = plot_df['phrase'].str.split().str[: n].str.join(' ').to_list()
     word_counts = Counter(words)
